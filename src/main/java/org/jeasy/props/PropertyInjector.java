@@ -33,6 +33,7 @@ import org.apache.commons.beanutils.ConvertUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -49,20 +50,20 @@ class PropertyInjector {
     private final Map<Class<?>, TypeConverter<?, ?>> typeConverters;
 
     PropertyInjector() {
-        annotationProcessors = new HashMap<>();
+        annotationProcessors = new LinkedHashMap<>();
         typeConverters = new HashMap<>();
         // TODO the day we decide to remove the dependency to apache commons-beanutils, register built-in converters here
 
         //register built-in annotation processors
-        annotationProcessors.put(SystemProperty.class, new SystemPropertyAnnotationProcessor());
         annotationProcessors.put(Property.class, new PropertyAnnotationProcessor());
+        annotationProcessors.put(EnvironmentVariable.class, new EnvironmentVariableAnnotationProcessor());
+        annotationProcessors.put(SystemProperty.class, new SystemPropertyAnnotationProcessor());
         annotationProcessors.put(I18NProperty.class, new I18NPropertyAnnotationProcessor());
         annotationProcessors.put(Properties.class, new PropertiesAnnotationProcessor());
         annotationProcessors.put(DBProperty.class, new DBPropertyAnnotationProcessor());
         annotationProcessors.put(JNDIProperty.class, new JNDIPropertyAnnotationProcessor());
         annotationProcessors.put(MavenProperty.class, new MavenPropertyAnnotationProcessor());
         annotationProcessors.put(ManifestProperty.class, new ManifestPropertyAnnotationProcessor());
-        annotationProcessors.put(EnvironmentVariable.class, new EnvironmentVariableAnnotationProcessor());
     }
 
     void injectProperty(final Field field, final Object object) throws PropertyInjectionException {
